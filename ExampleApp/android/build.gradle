@@ -21,7 +21,7 @@ buildscript {
 
 configurations.all {
     resolutionStrategy {
-        force "com.facebook.soloader:soloader:0.8.2"
+        force "com.facebook.soloader:soloader:0.9.0+"
     }
 }
 
@@ -36,6 +36,9 @@ allprojects {
         maven { // <---- Add this block
             url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases"
         }
+
+//         maven { url "file://Users/rajapulau/Documents/Qiscus/jitsi-meet-android-sdk-release" }
+        maven { url "https://artifactory.qiscus.com/artifactory/qiscus-meet" }
         
         maven {
             // Android JSC is installed from npm
