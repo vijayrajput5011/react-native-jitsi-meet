@@ -1,25 +1,25 @@
 import React, { useEffect } from 'react';
-import JitsiMeet, { JitsiMeetView } from 'react-native-jitsi-meet';
+import QiscusMeet, { QiscusMeetView } from 'react-native-jitsi-meet';
 
 function App() {
 
   useEffect(() => {
     setTimeout(() => {
-      const url = 'https://meet.jit.si/exemple';
+      const url = 'https://meet.jit.si/testmeet';
       const userInfo = {
         displayName: 'User',
         email: 'user@example.com',
         avatar: 'https:/gravatar.com/avatar/abc123',
       };
-      JitsiMeet.call(url, userInfo);
-      /* Você também pode usar o JitsiMeet.audioCall (url) para chamadas apenas de áudio */
-      /* Você pode terminar programaticamente a chamada com JitsiMeet.endCall () */
+      QiscusMeet.call(url, userInfo);
+      /* Você também pode usar o QiscusMeet.audioCall (url) para chamadas apenas de áudio */
+      /* Você pode terminar programaticamente a chamada com QiscusMeet.endCall () */
     }, 1000);
   }, [])
 
   useEffect(() => {
     return () => {
-      JitsiMeet.endCall();
+      QiscusMeet.endCall();
     };
   });
 
@@ -38,7 +38,7 @@ function App() {
     console.log(nativeEvent)
   }
   return (
-    <JitsiMeetView
+    <QiscusMeetView
       onConferenceTerminated={e => onConferenceTerminated(e)}
       onConferenceJoined={e => onConferenceJoined(e)}
       onConferenceWillJoin={e => onConferenceWillJoin(e)}
