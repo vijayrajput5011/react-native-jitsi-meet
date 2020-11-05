@@ -8,13 +8,17 @@ export const QiscusMeetView = requireNativeComponent('RNJitsiMeetView');
 export const QiscusMeetModule = NativeModules.RNJitsiMeetModule
 const call = QiscusMeetModule.call;
 const audioCall = QiscusMeetModule.audioCall;
-QiscusMeetModule.call = (url, userInfo) => {
+const setup = QiscusMeetModule.setup;
+QiscusMeetModule.call = (userInfo, videoMuted = false, audioMuted = false) => {
   userInfo = userInfo || {};
-  call(url, userInfo);
+  call(userInfo, videoMuted, audioMuted);
 }
-QiscusMeetModule.audioCall = (url, userInfo) => {
+QiscusMeetModule.audioCall = (userInfo, audioMuted = false) => {
   userInfo = userInfo || {};
-  audioCall(url, userInfo);
+  audioCall(userInfo, audioMuted);
+}
+QiscusMeetModule.setup = (appId, url) => {
+  setup(appId, url);
 }
 export default QiscusMeetModule;
 
