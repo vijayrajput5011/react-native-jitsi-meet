@@ -16,6 +16,9 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
     public static final String MODULE_NAME = "RNJitsiMeetModule";
     private IRNJitsiMeetViewReference mJitsiMeetViewReference;
 
+    private String appId;
+    private String url;
+
     public RNJitsiMeetModule(ReactApplicationContext reactContext, IRNJitsiMeetViewReference jitsiMeetViewReference) {
         super(reactContext);
         mJitsiMeetViewReference = jitsiMeetViewReference;
@@ -32,7 +35,29 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void call(String url, ReadableMap userInfo) {
+    public void setup(String appId, String url) {
+        this.appId = appId;
+        this.url = url;
+    }
+
+    @ReactMethod
+    public void call(ReadableMap userInfo, String room, Boolean videoMuted, Boolean audioMuted) {
+        String appId = this.appId;
+        String url = this.url;
+        String serverUrl = url + "/" + room;
+
+        if(appId == null && appId.trim().isEmpty() ) {
+            Log.d("QiscusMeet", "Please setup appID first");
+            return;
+        }
+
+        if(url == null && url.trim().isEmpty() ) {
+            Log.d("QiscusMeet","Please setup server URL first");
+            return;
+        }
+
+
+
         UiThreadUtil.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -54,9 +79,11 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
                           }
                     }
                     RNJitsiMeetConferenceOptions options = new RNJitsiMeetConferenceOptions.Builder()
-                            .setRoom(url)
+                            .setRoom(serverUrl)
                             .setAudioOnly(false)
                             .setUserInfo(_userInfo)
+                            .setVideoMuted(videoMuted)
+                            .setAudioMuted(audioMuted)
                             .build();
                     mJitsiMeetViewReference.getJitsiMeetView().join(options);
                 }
@@ -65,7 +92,22 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void audioCall(String url, ReadableMap userInfo) {
+    public void audioCall(ReadableMap userInfo, String room, Boolean audioMuted) {
+       String appId = this.appId;
+       String url = this.url;
+       String serverUrl = url + room;
+
+        if(appId == null && appId.trim().isEmpty() ) {
+            Log.d("QiscusMeet","Please setup appID first");
+            return;
+        }
+
+        if(url != null && !url.trim().isEmpty() ) {
+            Log.d("QiscusMeet","Please setup server URL first");
+            return;
+        }
+        
+
         UiThreadUtil.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -87,9 +129,10 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
                           }
                     }
                     RNJitsiMeetConferenceOptions options = new RNJitsiMeetConferenceOptions.Builder()
-                            .setRoom(url)
+                            .setRoom(serverUrl)
                             .setAudioOnly(true)
                             .setUserInfo(_userInfo)
+                            .setAudioMuted(audioMuted)
                             .build();
                     mJitsiMeetViewReference.getJitsiMeetView().join(options);
                 }
