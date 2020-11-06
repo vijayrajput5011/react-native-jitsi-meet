@@ -5,7 +5,7 @@ import QiscusMeet, { QiscusMeetView } from 'react-native-qiscus-meet';
 function App() {
 
   useEffect(() => {
-    const url = 'https://meet.qiscus.com/testmeet';
+    const url = 'https://meet.qiscus.com';
     const appId = "sh134ndh";
     QiscusMeet.setup(appId, url);
   }, [])
@@ -31,20 +31,15 @@ function App() {
 
   function call() {
     const userInfo = {
-      displayName: 'Meet User',
-      email: 'user@qiscus.net',
-      avatar: 'https:/gravatar.com/avatar/abc123',
+          displayName: 'Meet User',
+          email: 'user@qiscus.net',
+          room: 'roomtest',
+          avatar: 'https:/gravatar.com/avatar/abc123',
+          videoMuted : true,
+          audioMuted : true,
+          audioOnly: false,
     };
     QiscusMeet.call(userInfo);
-  }
-
-  function audioCall() {
-    const userInfo = {
-      displayName: 'User',
-      email: 'user@qiscus.net',
-      avatar: 'https:/gravatar.com/avatar/abc123',
-    };
-    QiscusMeet.audioCall(userInfo);
   }
 
   return (
@@ -59,13 +54,7 @@ function App() {
         style={styles.button}
         onPress={() => call()}
       >
-        <Text>Video Call</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => audioCall()}
-      >
-        <Text>Audio Call</Text>
+        <Text>Start all</Text>
       </TouchableOpacity>
       <QiscusMeetView
         onConferenceTerminated={e => onConferenceTerminated(e)}

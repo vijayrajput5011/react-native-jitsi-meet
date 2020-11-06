@@ -41,9 +41,10 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void call(ReadableMap userInfo, Boolean videoMuted, Boolean audioMuted) {
+    public void call(ReadableMap userInfo, String room, Boolean videoMuted, Boolean audioMuted) {
         String appId = this.appId;
         String url = this.url;
+        String serverUrl = url + "/" + room;
 
         if(appId == null && appId.trim().isEmpty() ) {
             Log.d("QiscusMeet", "Please setup appID first");
@@ -78,7 +79,7 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
                           }
                     }
                     RNJitsiMeetConferenceOptions options = new RNJitsiMeetConferenceOptions.Builder()
-                            .setRoom(url)
+                            .setRoom(serverUrl)
                             .setAudioOnly(false)
                             .setUserInfo(_userInfo)
                             .setVideoMuted(videoMuted)
@@ -91,9 +92,10 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void audioCall(ReadableMap userInfo, Boolean audioMuted) {
+    public void audioCall(ReadableMap userInfo, String room, Boolean audioMuted) {
        String appId = this.appId;
-        String url = this.url;
+       String url = this.url;
+       String serverUrl = url + room;
 
         if(appId == null && appId.trim().isEmpty() ) {
             Log.d("QiscusMeet","Please setup appID first");
@@ -104,6 +106,7 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
             Log.d("QiscusMeet","Please setup server URL first");
             return;
         }
+        
 
         UiThreadUtil.runOnUiThread(new Runnable() {
             @Override
@@ -126,7 +129,7 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
                           }
                     }
                     RNJitsiMeetConferenceOptions options = new RNJitsiMeetConferenceOptions.Builder()
-                            .setRoom(url)
+                            .setRoom(serverUrl)
                             .setAudioOnly(true)
                             .setUserInfo(_userInfo)
                             .setAudioMuted(audioMuted)
