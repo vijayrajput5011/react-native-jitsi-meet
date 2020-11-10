@@ -42,17 +42,21 @@ QiscusMeetModule.call = async (info) => {
   const userInfo = info || {};
   const { videoMuted, audioMuted, room } = userInfo;
 
-  const data = await getUserData(userInfo);
-
   if (!room) {
     console.log("Please provide room name");
     return;
   }
+  try {
+    const data = await getUserData(userInfo);
+    if (!data.token) return;
 
-  if (!userInfo.audioOnly) {
-    call(userInfo, room, videoMuted, audioMuted, data.token);
-  } else {
-    audioCall(userInfo, room, audioMuted, data.token);
+    if (!userInfo.audioOnly) {
+      call(userInfo, room, videoMuted, audioMuted, data.token);
+    } else {
+      audioCall(userInfo, room, audioMuted, data.token);
+    }
+  } catch (error) {
+    console.log("Error get token", error);
   }
 };
 
