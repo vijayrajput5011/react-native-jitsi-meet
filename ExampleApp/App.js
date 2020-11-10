@@ -5,8 +5,8 @@ import QiscusMeet, { QiscusMeetView } from 'react-native-qiscus-meet';
 function App() {
 
   useEffect(() => {
-    const url = 'https://meet.qiscus.com';
-    const appId = "sh134ndh";
+    const url = 'https://call.qiscus.com';
+    const appId = "meetstage-iec22sd";
     QiscusMeet.setup(appId, url);
   }, [])
 
