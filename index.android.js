@@ -22,7 +22,11 @@ const getUserData = async ({
 
   const response = await fetch(`${url}:9090/generate_url`, {
     method: "POST",
-    body: {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
       avatar: avatar,
       name: displayName,
       email: email,
@@ -31,7 +35,7 @@ const getUserData = async ({
       room: room,
       moderator: false,
       appId: appId,
-    },
+    }),
   });
 
   const data = await response.json();
