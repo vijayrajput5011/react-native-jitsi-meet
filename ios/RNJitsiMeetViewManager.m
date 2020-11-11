@@ -75,6 +75,11 @@ RCT_EXPORT_METHOD(audioCall:(NSString *)urlString userInfo:(NSDictionary *)userI
     });
 }
 
+RCT_EXPORT_METHOD(setup:(NSString *)appId userInfo:(NSString *)url)
+{
+ 
+}
+
 RCT_EXPORT_METHOD(endCall)
 {
     dispatch_sync(dispatch_get_main_queue(), ^{
