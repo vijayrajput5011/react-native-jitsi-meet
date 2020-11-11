@@ -110,7 +110,7 @@ RCT_REMAP_METHOD(getSetup,
     resolve(setup);
   } else {
     NSError *error = @"Not found";
-    reject(@"no_events", @"There were no events", error);
+    reject(@"no_setup", @"There were no setup", error);
   }
 }
 
