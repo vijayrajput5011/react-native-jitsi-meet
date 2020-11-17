@@ -1,10 +1,14 @@
 #import "RNJitsiMeetViewManager.h"
 #import "RNJitsiMeetView.h"
 #import <JitsiMeet/JitsiMeetUserInfo.h>
+#import <Foundation/Foundation.h>
 
 @implementation RNJitsiMeetViewManager{
     RNJitsiMeetView *jitsiMeetView;
 }
+
+NSString *appId = @"";
+NSString *urlString = @"";
 
 RCT_EXPORT_MODULE(RNJitsiMeetView)
 RCT_EXPORT_VIEW_PROPERTY(onConferenceJoined, RCTBubblingEventBlock)
@@ -24,9 +28,11 @@ RCT_EXPORT_METHOD(initialize)
     RCTLogInfo(@"Initialize is deprecated in v2");
 }
 
-RCT_EXPORT_METHOD(call:(NSString *)urlString userInfo:(NSDictionary *)userInfo)
+RCT_EXPORT_METHOD(call:(NSDictionary *)userInfo room:(NSString *)room videoMuted:(BOOL *)videoMuted audioMuted:(BOOL *)audioMuted token:(NSString *)token)
 {
     RCTLogInfo(@"Load URL %@", urlString);
+    NSString *baseUrl = [NSString stringWithFormat:@"%@/%@/%@", urlString, appId, room];
+
     JitsiMeetUserInfo * _userInfo = [[JitsiMeetUserInfo alloc] init];
     if (userInfo != NULL) {
       if (userInfo[@"displayName"] != NULL) {
@@ -42,16 +48,21 @@ RCT_EXPORT_METHOD(call:(NSString *)urlString userInfo:(NSDictionary *)userInfo)
     }
     dispatch_sync(dispatch_get_main_queue(), ^{
         JitsiMeetConferenceOptions *options = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {        
-            builder.room = urlString;
+            builder.room = baseUrl;
+            builder.token = token;
+            builder.audioMuted = audioMuted;
+            builder.videoMuted = videoMuted;
             builder.userInfo = _userInfo;
         }];
         [jitsiMeetView join:options];
     });
 }
 
-RCT_EXPORT_METHOD(audioCall:(NSString *)urlString userInfo:(NSDictionary *)userInfo)
+RCT_EXPORT_METHOD(audioCall:(NSDictionary *)userInfo room:(NSString *)room audioMuted:(BOOL *)audioMuted token:(NSString *)token)
 {
     RCTLogInfo(@"Load Audio only URL %@", urlString);
+     NSString *baseUrl = [NSString stringWithFormat:@"%@/%@/%@", urlString, appId, room];
+
     JitsiMeetUserInfo * _userInfo = [[JitsiMeetUserInfo alloc] init];
     if (userInfo != NULL) {
       if (userInfo[@"displayName"] != NULL) {
@@ -69,10 +80,18 @@ RCT_EXPORT_METHOD(audioCall:(NSString *)urlString userInfo:(NSDictionary *)userI
         JitsiMeetConferenceOptions *options = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {        
             builder.room = urlString;
             builder.userInfo = _userInfo;
+            builder.token = token;
+            builder.audioMuted = audioMuted;
             builder.audioOnly = YES;
         }];
         [jitsiMeetView join:options];
     });
+}
+
+RCT_EXPORT_METHOD(setup:(NSString *)baseUrl idApp:(NSString *)idApp)
+{
+  appId = idApp;
+  urlString = baseUrl;
 }
 
 RCT_EXPORT_METHOD(endCall)
@@ -80,6 +99,19 @@ RCT_EXPORT_METHOD(endCall)
     dispatch_sync(dispatch_get_main_queue(), ^{
         [jitsiMeetView leave];
     });
+}
+
+RCT_REMAP_METHOD(getSetup,
+                 getSetupWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
+{
+  NSDictionary *setup = @{ @"url" : urlString, @"appId" : appId};
+  if (setup) {
+    resolve(setup);
+  } else {
+    NSError *error = @"Not found";
+    reject(@"no_setup", @"There were no setup", error);
+  }
 }
 
 #pragma mark JitsiMeetViewDelegate
